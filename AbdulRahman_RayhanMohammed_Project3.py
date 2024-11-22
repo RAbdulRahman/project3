@@ -24,15 +24,15 @@ def deriv1(r,initstate):
 
 
 def stop_integ(r,state):
-    return state[1]
+    return state[0]
 
 stop_integ.terminal = True
 stop_integ.direction = -1
 
-r_span = np.linspace(1,7000,100000)
-initials = [0.1,0.1]
+r_span = np.linspace(0.00001,10,10000)
+initials = [0.1,0] # rho C, mass =0
 
-test = scint.solve_ivp(deriv1,(1,7000),initials,t_eval =r_span,events=stop_integ)
+test = scint.solve_ivp(deriv1,(0.00001,10),initials,t_eval =r_span,events=stop_integ)
 
 plt.plot(test.t,test.y[0])
 plt.show()
