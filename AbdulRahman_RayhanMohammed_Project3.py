@@ -20,7 +20,7 @@ def deriv1(r,initstate):
     if rho >= 0:
         x = (rho)**(1/3)
         gamma = x**2/(3*(1+x**2)**0.5)
-        d_rho = -m*rho/(gamma*r**2)
+        d_rho = -m*rho/(gamma*(r**2))
         d_mass = (r**2) * rho
         return d_rho,d_mass
 
@@ -91,12 +91,12 @@ r0 = 3.86 * 10**6 #m
 rho0 = 1.948 * 10**9 #kg/m^3
 r_span = np.linspace(0.00000001,10,10000000)
 for rhoc in rhocs: # Copying previous function but now with modified output for physicsal units
-    initials = [rhoc*rho0,0]
+    initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,10),initials,t_eval =r_span,events=stop_integ) 
     plt.plot(result.t*r0,result.y[0]*rho0)
     plt.xlabel('Radius (m)')
     plt.ylabel('Density kg/m^3')
-    plt.show()
+    # plt.show()
 
     plt.plot(result.t*r0,result.y[1]*m0)
     plt.xlabel('Radius (m)')
