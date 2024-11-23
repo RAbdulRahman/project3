@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 
 def deriv1(r,initstate): 
     # defining derivative for part 1 using equations 8 and 9
+    '''Provide initial state as a list of density and mass'''
     rho = initstate[0]
     m = initstate[1]
     if rho >= 0:
@@ -55,21 +56,20 @@ initials = [2500000,0] # rho C, mass =0
 # plt.show()
 rhocs = [0.1,1,10,150,2000,7000,15000,80000,100000,150000,2500000]
 i = 1
-for rhoc in rhocs:
+for rhoc in rhocs: # Solving over list of chosen rho_cs
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
-    plt.subplot(3,4,i)
+    plt.subplot(3,4,i) #plotting subplots on one figure
     plt.plot(result.t,result.y[0])
     plt.plot(result.t,result.y[1])
     plt.xlabel('Radius')
     plt.ylabel('Parameter')
-    titlestrng = 'Rho C = ' + str(rhoc)
-    plt.title(titlestrng)
+    plt.title(f'ρ_c = {rhoc}') 
     i += 1
     print('Max Mass (dimensionless)~',result.y[1][-1])
     
-plt.legend(['Dimensionless Density','Dimensionless Mass'])
-plt.suptitle('DImensionless Mass and Density as Funtions of Radius')
+plt.legend(['Dimensionless Density','Dimensionless Mass'],loc='lower right')
+plt.suptitle('Dimensionless Mass and Density as Funtions of Radius')
 plt.tight_layout()
 plt.show()
 
@@ -84,28 +84,59 @@ plt.show()
 
 # Not using astropy since instructions specify 'MAY find ... useful'
 
+
+# defining constants 
 MSun = 1.988400 * 10**30 #kg, source: https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
 REarth = 6378000 #m, equatorial radius, source: https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 m0 = 1.4175* 10**30 #kg
 r0 = 3.86 * 10**6 #m
 rho0 = 1.948 * 10**9 #kg/m^3
 r_span = np.linspace(0.00000001,10,10000000)
+
+#seperate figures for physical mass and density
+fig1 = plt.figure(1)
+fig2 = plt.figure(2)
+
+i=1
 for rhoc in rhocs: # Copying previous function but now with modified output for physicsal units
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,10),initials,t_eval =r_span,events=stop_integ) 
+    plt.figure(1)
+    plt.subplot(3,4,i)
     plt.plot(result.t*r0,result.y[0]*rho0)
     plt.xlabel('Radius (m)')
     plt.ylabel('Density kg/m^3')
-    # plt.show()
-
-    plt.plot(result.t*r0,result.y[1]*m0)
-    plt.xlabel('Radius (m)')
-    plt.ylabel('Mass (kg)')
-    plt.show()
-
+    plt.title(f'ρ_c = {rhoc}') 
     
-    print('Max Mass ()~',result.y[1][-1]*m0)
+    plt.figure(2)
+    plt.subplot(3,4,i)
+    plt.plot(result.y[1]*m0,result.t*r0)
+    plt.ylabel('Radius (m)')
+    plt.xlabel('Mass (kg)')
+    plt.title(f'ρ_c = {rhoc}') 
+    i += 1
+    
+
+    print('Max Mass (kg)~',result.y[1][-1]*m0)
+
+plt.figure(1)
+plt.suptitle('Density vs Radius in SI Units for Various Starting Densities')
+plt.tight_layout()
+
+
+plt.figure(2)
+plt.suptitle('Radius vs Mass in SI Units for Various Starting Densities')
+plt.tight_layout()
+plt.show()
 
 
 
+
+########## ANSWER 2 COMMENTS #########
+
+# Using given Chandrasekhar limit definition, the limit is 5.836/4 * Msun = 2.9011 e30 kg
+# As can be seen in the maximum masses, our estimate would be about 2.85 e 30 kg which is 
+# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.7%.
+# Factors causing this discrepancy could be the ODE solver and the relatively dated citation and improvements
+# to parameters of astronomical objects, example: the mass of the sun used is from present day estimates.
 
