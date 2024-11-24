@@ -5,8 +5,8 @@ import scipy.integrate as scint
 import matplotlib.pyplot as plt
 
 
-####### PART/QUESTION 1 ###############################
-#######################################################
+#######  PART/ANSWER 1 ########################################
+###############################################################
 
 
 # to solve eqn 8 and 9 with B.C. m(r=0)=0 and rho (r =0) = rho c
@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 #eqn 8: d rho/dr = -m rho/gamma(x)r^2
 #eqn 9: dm/dr = r^2 rho , x = rho^1/3
 
+
+# Defining derivative
 def deriv1(r,initstate): 
     # defining derivative for part 1 using equations 8 and 9
     '''Provide initial state as a list of density and mass'''
@@ -26,7 +28,7 @@ def deriv1(r,initstate):
         d_mass = (r**2) * rho
         return d_rho,d_mass
 
-
+# Defining event for stopping 
 def stop_integ(r,state):
     # stopping when rho less than zero
     return state[0]
@@ -35,14 +37,16 @@ stop_integ.terminal = True
 stop_integ.direction = -1
 
 
-####   ANSWER 1 COMMENTS  #########
+####  ANSWER 1 COMMENTS  #####
 
 # The tiny starting value of r chosen here is 0.00000001. This would translate to about
 # 0.000001 % of R0. Since this value is taken to be 7,720/ue km, the starting radius
 # would be ~7/ue cm ~ 3.5 cm when ue =2.
 # This small of a radius is negligibly different from starting at 0 for Earth sized bodies. 
 
-#########
+
+
+# Defining r span up to 10 times given r0
 r_span = np.linspace(0.00000001,100,1000000)
 
 #Testing Function 
@@ -59,7 +63,7 @@ plt.title('Example Dimensionless Plot, ρ_c = 100')
 plt.legend(['Mass'])
 plt.show()
 
-
+# Printing solution
 print('Part1: Printing dimensionless mass for ρ_c')
 print()
 # Ten rho c and their plot to show in report
@@ -75,7 +79,7 @@ for rhoc in rhocs: # Solving over list of chosen rho_cs
     plt.xlabel('Mass')
     plt.title(f'ρ_c = {rhoc}') 
     i += 1 # chnaging position of subplot using i
-    print('Mass (dimensionless)~',round(result.y[1][-1],4), ' Radius (Dimensionless) ~ ',round(result.t[-1],4),'ρ_c = ',rhoc)
+    print('Mass (dimensionless)~',round(result.y[1][-1],4), ' |  Radius (Dimensionless) ~ ',round(result.t[-1],4),' | ρ_c = ',rhoc)
     
 plt.legend(['Dimensionless Mass'],loc='lower right')
 plt.suptitle('Radius vs Mass')
@@ -83,6 +87,12 @@ plt.tight_layout()
 plt.show()
 
 print()
+
+
+
+
+
+
 
 #######  PART/ANSWER 2 ########################################
 ###############################################################
@@ -142,7 +152,7 @@ plt.show()
 
 
 
-########## ANSWER/PART 2 COMMENTS #########
+####  ANSWER 2 COMMENTS  #####
 
 # Using Kippenhahn & Weigert's Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙.
 # As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
@@ -153,32 +163,44 @@ plt.show()
 
 
 
-######## PART/ANSWER 3 ###################################################
-##########################################################################
+
+
+
+#######  PART/ANSWER 3 ########################################
+###############################################################
+
+
 print()
 print('Part 3: Printing mass and radii for RK45 and DOP853 ODE solving methods')
 print()
-rho_cs = [3,5,10]
+# Using 3 values for rho c
+rho_cs = [3,50,100]
 for rho_c in rho_cs:
     initials = [rho_c,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ) # Default method is RK45
     result2 = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ,method = 'DOP853') # DOP853 should be more precise than standard RK 45
-    # plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
-    # plt.xlabel('Mass (M⊙)')
-    # plt.ylabel('Radius (R⊙)')
+    print('For ρ_c = ' , rhoc,':')
     print('Mass   (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'| Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
     print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0/r_sun,4),'| Radius (R⊙) using DOP853: ',round(result2.t[-1]*r0/r_sun,4))
     print()
 
 
+#####  ANSWER 3 COMMENTS  #####
+
+# The differnce between the two methods, RK45 and DOP853 is minor as seen
+# They generally agree for at least two decimal places (as multiples of solar units)
+# However, since DOP853 is a more accurate method, I use it in Part 4.
 
 
 
 
 
 
-### PART 4 ################################################################
-###########################################################################
+
+
+
+#######  PART/ANSWER 4 ########################################
+###############################################################
 
 
 # Plotting Mass vs Radius, rho Cs chosen to fit csv 
@@ -216,6 +238,17 @@ plt.title('Plot for Chosen Values of ρC ')
 plt.show()
 
 
+####  ANSWER 4 COMMENTS  ####
+
+# The observations agree very well for chosen values of ρ_c in the range of 1-5.
+# This is likely an indication that the inner density of white dwarf is in this range (as a multiple of ρ0).
 
 
+
+
+
+
+
+
+######## END #############
 
