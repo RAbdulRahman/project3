@@ -59,14 +59,15 @@ plt.title('Example Dimensionless Plot, ρ_c = 100')
 plt.legend(['Density','Mass'])
 plt.show()
 
+
+print('Part1: Printing dimensionless mass for ρ_c')
+print()
 # Ten rho c and their plot
-rhocs = [0.1,0.5,1,2.5,5,10,25,100,500,2000,2500000]
+rhocs = [0.1,0.5,1,2.5,5,10,25,100,500,2500000]
 i = 1
 for rhoc in rhocs: # Solving over list of chosen rho_cs
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
-    if i == 9:
-        i = 10 # to make sure legend doesnt cover graph
     plt.subplot(3,4,i) #plotting subplots on one figure
     plt.plot(result.t,result.y[0])
     plt.plot(result.t,result.y[1])
@@ -74,14 +75,14 @@ for rhoc in rhocs: # Solving over list of chosen rho_cs
     plt.ylabel('Parameter')
     plt.title(f'ρ_c = {rhoc}') 
     i += 1 # chnaging position of subplot using i
-    print('Mass (dimensionless)~',result.y[1][-1])
+    print('Mass (dimensionless)~',result.y[1][-1], 'ρ_c = ',rhoc)
     
 plt.legend(['Dimensionless Density','Dimensionless Mass'],loc='lower right')
 plt.suptitle('Dimensionless Mass and Density as Funtions of Radius')
 plt.tight_layout()
 plt.show()
 
-
+print()
 
 #######  PART/ANSWER 2 ########################################
 ###############################################################
@@ -106,7 +107,8 @@ r_span = np.linspace(0.00000001,10,10000000)
 fig2 = plt.figure(2)
 
 i=1
-
+print('Part 2: Printing Mass and Radii in solar units for various ρ_c')
+print()
 for rhoc in rhocs: # Copying previous function but now with modified output for physicsal units
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,10),initials,t_eval =r_span,events=stop_integ) 
@@ -125,7 +127,7 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
     
     i += 1
 
-    print('Mass (M⊙)~',result.y[1][-1]*m0/m_sun, 'for', 'Radius (R⊙)~',result.t[-1]*r0/r_sun)
+    print('Mass (M⊙)~',result.y[1][-1]*m0/m_sun, 'and', 'Radius (R⊙)~',result.t[-1]*r0/r_sun,'for ρ_c =',rhoc)
 
 # plt.figure(1)
 # plt.suptitle('Density vs Radius for Various Starting Densities')
@@ -133,6 +135,7 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
 
 
 plt.figure(2) 
+plt.legend(['ρ_c = 0.1','ρ_c = 0.5','ρ_c = 1','ρ_c = 2.5','ρ_c = 5','ρ_c = 10','ρ_c = 25','ρ_c = 100','ρ_c = 500','ρ_c = 2500000'],loc='upper right')
 plt.suptitle('Radius vs Mass for Various Starting Densities')
 plt.tight_layout()
 plt.show()
@@ -152,8 +155,10 @@ plt.show()
 
 ######## PART/ANSWER 3 ###################################################
 ##########################################################################
-
-rho_cs = [1,2,5]
+print()
+print('Part 3: Printing mass and radii for RK45 and DOP853 ODE solving methods')
+print()
+rho_cs = [3,5,10]
 for rho_c in rho_cs:
     initials = [rho_c,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ) # Default method is RK45
@@ -161,8 +166,8 @@ for rho_c in rho_cs:
     # plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
     # plt.xlabel('Mass (M⊙)')
     # plt.ylabel('Radius (R⊙)')
-    print('Mass (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
-    print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0,4),'Radius (R⊙) using DOP853: ',round(result2.t[-1],4))
+    print('Mass   (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'| Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
+    print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0/r_sun,4),'| Radius (R⊙) using DOP853: ',round(result2.t[-1]*r0/r_sun,4))
     print()
 
 
@@ -180,7 +185,7 @@ for rho_c in rho_cs:
 rho_cs = [1,1.5,2,3,5]
 for rho_c in rho_cs:
     initials = [rho_c,0]
-    result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
+    result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ,method='DOP853')
     plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
     plt.xlabel('Mass (M⊙)')
     plt.ylabel('Radius (R⊙)')
