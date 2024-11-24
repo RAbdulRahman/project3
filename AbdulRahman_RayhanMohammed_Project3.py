@@ -65,14 +65,16 @@ i = 1
 for rhoc in rhocs: # Solving over list of chosen rho_cs
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
+    if i == 9:
+        i = 10 # to make sure legend doesnt cover graph
     plt.subplot(3,4,i) #plotting subplots on one figure
-    #plt.plot(result.t,result.y[0])
+    plt.plot(result.t,result.y[0])
     plt.plot(result.t,result.y[1])
     plt.xlabel('Radius')
     plt.ylabel('Parameter')
     plt.title(f'ρ_c = {rhoc}') 
-    i += 1
-    print('Max Mass (dimensionless)~',result.y[1][-1])
+    i += 1 # chnaging position of subplot using i
+    print('Mass (dimensionless)~',result.y[1][-1])
     
 plt.legend(['Dimensionless Density','Dimensionless Mass'],loc='lower right')
 plt.suptitle('Dimensionless Mass and Density as Funtions of Radius')
@@ -99,17 +101,17 @@ r0 = 1.544 * 10**7 /4 #m
 
 r_span = np.linspace(0.00000001,10,10000000)
 
-#seperate figures for physical mass and density
-fig1 = plt.figure(1)
+#seperate figures for physical mass and density, took out density figure for submission
+#fig1 = plt.figure(1)
 fig2 = plt.figure(2)
 
 i=1
-leg = ''
+
 for rhoc in rhocs: # Copying previous function but now with modified output for physicsal units
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,10),initials,t_eval =r_span,events=stop_integ) 
-    plt.figure(1)
-    # #plt.subplot(3,4,i)    # Plotted rho to check if it made sense 
+    # plt.figure(1)
+    # #plt.subplot(3,4,i)                              # Plotted rho to check if it made sense 
     # plt.plot(result.t*r0/r_sun,result.y[0]*rho0/rho_sun)
     # plt.xlabel('Radius (M⊙)')
     # plt.ylabel('Density (ρ⊙)')
@@ -120,7 +122,7 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
     plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun)
     plt.ylabel('Radius (R⊙)')
     plt.xlabel('Mass (M⊙)')
-    leg += str(rhoc)
+    
     i += 1
 
     print('Mass (M⊙)~',result.y[1][-1]*m0/m_sun, 'for', 'Radius (R⊙)~',result.t[-1]*r0/r_sun)
@@ -131,7 +133,6 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
 
 
 plt.figure(2) 
-plt.legend(leg)
 plt.suptitle('Radius vs Mass for Various Starting Densities')
 plt.tight_layout()
 plt.show()
@@ -140,9 +141,28 @@ plt.show()
 
 ########## ANSWER/PART 2 COMMENTS #########
 
-# Using given Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙
+# Using Kippenhahn & Weigert's Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙.
 # As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
-# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.8%.
+# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.8%. 
+# This difference could be attributed to integration errors and improvements in the accuracy of sun's mass since 1990. 
+
+
+
+
+
+######## PART/ANSWER 3 ###################################################
+##########################################################################
+
+rho_cs = [1,2,5]
+for rho_c in rho_cs:
+    initials = [rho_c,0]
+    result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ) # Default method is RK45
+    result2 = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ,method = 'DOP853') # DOP853 should be more precise than standard RK 45
+    # plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
+    # plt.xlabel('Mass (M⊙)')
+    # plt.ylabel('Radius (R⊙)')
+    print('Mass (M⊙) using RK45: ',result.y[1][-1]*m0/m_sun,result2.y[1][-1]*m0/m_sun,'Mass (M⊙) using DOP853: ',result2.y[1][-1]*m0/m_sun,'\n',
+          'Radius (R⊙) using RK45: ',result.t[-1]*r0,'Radius (R⊙) using DOP853: ',result2.t[-1])
 
 
 
@@ -151,7 +171,8 @@ plt.show()
 
 
 
-### PART 4 #########
+### PART 4 ################################################################
+###########################################################################
 
 
 # Plotting Mass vs Radius, rho Cs chosen to fit csv 
@@ -164,7 +185,7 @@ for rho_c in rho_cs:
     plt.ylabel('Radius (R⊙)')
     print(result.y[1][-1]*m0/m_sun)
 
-
+# lists for csv data
 x = []
 x_err = []
 y = []
@@ -173,19 +194,22 @@ y_err = []
 with open('wd_mass_radius.csv', 'r') as file:
     lines = file.readlines()[1:]  # Ignore the first line (header)
     
-    for line in lines:
+    for line in lines: # filling lists to plot csv data
         values = line.strip().split(',')
-        x.append(float(values[0]))        # First column for x-axis
-        x_err.append(float(values[1]))    # Second column for error in x
-        y.append(float(values[2]))        # Third column for y-axis
-        y_err.append(float(values[3]))    # Fourth column for error in y
+        x.append(float(values[0]))        
+        x_err.append(float(values[1]))    
+        y.append(float(values[2]))        
+        y_err.append(float(values[3]))    
 
 # Plot data with error bars
-plt.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o', capsize=5, label='Data')
+plt.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o', capsize=2, label='Data')
 
 
-plt.legend(['ρ_c = 1','ρ_c = 1.5','ρ_c = 2','ρ_c = 3','ρ_c = 5','Given Data with error bars'])
+plt.legend(['ρ_c = 1','ρ_c = 1.5','ρ_c = 2','ρ_c = 3','ρ_c = 5','Given Data'])
 plt.title('Plot for Chosen Values of ρC ')
 plt.show()
+
+
+
 
 
