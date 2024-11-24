@@ -51,34 +51,34 @@ initials = [100,0] # rho C, mass =0
 # Example plot
 result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
 
-plt.plot(result.t,result.y[0])
+#plt.plot(result.t,result.y[0]) #not plotting density
 plt.plot(result.t,result.y[1])
 plt.xlabel('Radius (multiple of R0)')
 plt.ylabel('Mass or Desnity (multiple of M0 and ρ0 respectively)')
 plt.title('Example Dimensionless Plot, ρ_c = 100')
-plt.legend(['Density','Mass'])
+plt.legend(['Mass'])
 plt.show()
 
 
 print('Part1: Printing dimensionless mass for ρ_c')
 print()
-# Ten rho c and their plot
+# Ten rho c and their plot to show in report
 rhocs = [0.1,0.5,1,2.5,5,10,25,100,500,2500000]
 i = 1
 for rhoc in rhocs: # Solving over list of chosen rho_cs
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
     plt.subplot(3,4,i) #plotting subplots on one figure
-    plt.plot(result.t,result.y[0])
-    plt.plot(result.t,result.y[1])
-    plt.xlabel('Radius')
-    plt.ylabel('Parameter')
+    #plt.plot(result.t,result.y[0]) 
+    plt.plot(result.y[1],result.t)
+    plt.ylabel('Radius')
+    plt.xlabel('Mass')
     plt.title(f'ρ_c = {rhoc}') 
     i += 1 # chnaging position of subplot using i
-    print('Mass (dimensionless)~',result.y[1][-1], 'ρ_c = ',rhoc)
+    print('Mass (dimensionless)~',round(result.y[1][-1],4), ' Radius (Dimensionless) ~ ',round(result.t[-1],4),'ρ_c = ',rhoc)
     
-plt.legend(['Dimensionless Density','Dimensionless Mass'],loc='lower right')
-plt.suptitle('Dimensionless Mass and Density as Funtions of Radius')
+plt.legend(['Dimensionless Mass'],loc='lower right')
+plt.suptitle('Radius vs Mass')
 plt.tight_layout()
 plt.show()
 
@@ -127,7 +127,7 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
     
     i += 1
 
-    print('Mass (M⊙)~',result.y[1][-1]*m0/m_sun, 'and', 'Radius (R⊙)~',result.t[-1]*r0/r_sun,'for ρ_c =',rhoc)
+    print('Mass (M⊙)~',round(result.y[1][-1]*m0/m_sun,4), 'and', 'Radius (R⊙)~',round(result.t[-1]*r0/r_sun,4),'for ρ_c =',rhoc)
 
 # plt.figure(1)
 # plt.suptitle('Density vs Radius for Various Starting Densities')
