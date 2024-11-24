@@ -52,16 +52,16 @@ r_span = np.linspace(0.00000001,100,1000000)
 #Testing Function 
 initials = [100,0] # rho C, mass =0
 
-# Example plot
-result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
+# Example plot to check if solver worked
+# result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
 
-#plt.plot(result.t,result.y[0]) #not plotting density
-plt.plot(result.t,result.y[1])
-plt.xlabel('Radius (multiple of R0)')
-plt.ylabel('Mass or Desnity (multiple of M0 and ρ0 respectively)')
-plt.title('Example Dimensionless Plot, ρ_c = 100')
-plt.legend(['Mass'])
-plt.show()
+# #plt.plot(result.t,result.y[0]) #not plotting density
+# plt.plot(result.t,result.y[1])
+# plt.xlabel('Radius (multiple of R0)')
+# plt.ylabel('Mass or Desnity (multiple of M0 and ρ0 respectively)')
+# plt.title('Example Dimensionless Plot, ρ_c = 100')
+# plt.legend(['Mass'])
+# plt.show()
 
 # Printing solution
 print('Part1: Printing dimensionless mass for ρ_c')
@@ -156,7 +156,8 @@ plt.show()
 
 # Using Kippenhahn & Weigert's Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙.
 # As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
-# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.8%. 
+# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.8% (this was confirmed with other values
+# of rho c closer to the upper limit but in order to display a better distribution of mass and radius, some higher values were dropped in favor of lower).
 # This difference could be attributed to integration errors and improvements in the accuracy of sun's mass since 1990. 
 
 
@@ -179,7 +180,7 @@ for rho_c in rho_cs:
     initials = [rho_c,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ) # Default method is RK45
     result2 = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ,method = 'DOP853') # DOP853 should be more precise than standard RK 45
-    print('For ρ_c = ' , rhoc,':')
+    print('For ρ_c = ' , rho_c,':')
     print('Mass   (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'| Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
     print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0/r_sun,4),'| Radius (R⊙) using DOP853: ',round(result2.t[-1]*r0/r_sun,4))
     print()
