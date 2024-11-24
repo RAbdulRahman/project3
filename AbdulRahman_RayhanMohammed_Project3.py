@@ -60,13 +60,13 @@ plt.legend(['Density','Mass'])
 plt.show()
 
 # Ten rho c and their plot
-rhocs = [0.1,0.5,1,10,50,150,500,2000,15000,80000,2500000]
+rhocs = [0.1,0.5,1,2.5,5,10,25,100,500,2000,2500000]
 i = 1
 for rhoc in rhocs: # Solving over list of chosen rho_cs
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
     plt.subplot(3,4,i) #plotting subplots on one figure
-    plt.plot(result.t,result.y[0])
+    #plt.plot(result.t,result.y[0])
     plt.plot(result.t,result.y[1])
     plt.xlabel('Radius')
     plt.ylabel('Parameter')
@@ -125,18 +125,28 @@ for rhoc in rhocs: # Copying previous function but now with modified output for 
     print('Max Mass (M⊙)~',result.y[1][-1]*m0/m_sun)
 
 plt.figure(1)
-plt.suptitle('Density vs Radius in SI Units for Various Starting Densities')
+plt.suptitle('Density vs Radius for Various Starting Densities')
 plt.tight_layout()
 
 
 plt.figure(2) 
-plt.suptitle('Radius vs Mass in SI Units for Various Starting Densities')
+plt.suptitle('Radius vs Mass for Various Starting Densities')
 plt.tight_layout()
 plt.show()
 
 
-# Example Plot Mass vs Radius, rho Cs chosen to fit experimental results
-rho_cs = [5,15,50]
+
+
+
+
+
+### PART 4 #########
+
+
+
+
+# Plotting Mass vs Radius, rho Cs chosen to fit csv 
+rho_cs = [1,3,5]
 for rho_c in rho_cs:
     initials = [rho_c,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
@@ -145,7 +155,27 @@ for rho_c in rho_cs:
     plt.ylabel('Radius (R⊙)')
     print(result.y[1][-1]*m0/m_sun)
 
-plt.legend(['ρ_c = 5','ρ_c = 15','ρ_c = 50'])
+
+x = []
+x_err = []
+y = []
+y_err = []
+
+with open('wd_mass_radius.csv', 'r') as file:
+    lines = file.readlines()[1:]  # Ignore the first line (header)
+    
+    for line in lines:
+        values = line.strip().split(',')
+        x.append(float(values[0]))        # First column for x-axis
+        x_err.append(float(values[1]))    # Second column for error in x
+        y.append(float(values[2]))        # Third column for y-axis
+        y_err.append(float(values[3]))    # Fourth column for error in y
+
+# Plot data with error bars
+plt.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o', capsize=5, label='Data')
+
+
+plt.legend(['ρ_c = 1','ρ_c = 3','ρ_c = 5','Given Data with error bars'])
 plt.title('Plot for Chosen Values of ρC ')
 plt.show()
 
@@ -155,7 +185,7 @@ plt.show()
 ########## ANSWER 2 COMMENTS #########
 
 # Using given Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙
-# As can be seen in the maximum masses, through the plot or the printed values, our estimate would be about 2.85 e 30 kg which is 
+# As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
 # reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.7%.
 # Factors causing this discrepancy could be the ODE solver and the relatively dated citation and improvements
 # to parameters of astronomical objects, example: the mass of the sun used is from present day estimates.
