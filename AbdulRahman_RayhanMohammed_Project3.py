@@ -5,8 +5,8 @@ import scipy.integrate as scint
 import matplotlib.pyplot as plt
 
 
-####### PART/QUESTION 1 #############
-
+####### PART/QUESTION 1 ###############################
+#######################################################
 
 
 # to solve eqn 8 and 9 with B.C. m(r=0)=0 and rho (r =0) = rho c
@@ -55,7 +55,7 @@ plt.plot(result.t,result.y[0])
 plt.plot(result.t,result.y[1])
 plt.xlabel('Radius (multiple of R0)')
 plt.ylabel('Mass or Desnity (multiple of M0 and ρ0 respectively)')
-plt.title('Example Dimensionless Plot, ρC = 100')
+plt.title('Example Dimensionless Plot, ρ_c = 100')
 plt.legend(['Density','Mass'])
 plt.show()
 
@@ -81,8 +81,8 @@ plt.show()
 
 
 
-#####    PART/ANSWER 2 ########
-
+#######  PART/ANSWER 2 ########################################
+###############################################################
 
 # Constants, conversion done while plotting
 
@@ -104,35 +104,46 @@ fig1 = plt.figure(1)
 fig2 = plt.figure(2)
 
 i=1
+leg = ''
 for rhoc in rhocs: # Copying previous function but now with modified output for physicsal units
     initials = [rhoc,0]
     result = scint.solve_ivp(deriv1,(0.00000001,10),initials,t_eval =r_span,events=stop_integ) 
     plt.figure(1)
-    #plt.subplot(3,4,i)
-    plt.plot(result.t*r0/r_sun,result.y[0]*rho0/rho_sun)
-    plt.xlabel('Radius (M⊙)')
-    plt.ylabel('Density (ρ⊙)')
-    plt.title(f'ρ_c = {rhoc}') 
+    # #plt.subplot(3,4,i)    # Plotted rho to check if it made sense 
+    # plt.plot(result.t*r0/r_sun,result.y[0]*rho0/rho_sun)
+    # plt.xlabel('Radius (M⊙)')
+    # plt.ylabel('Density (ρ⊙)')
+    # plt.title(f'ρ_c = {rhoc}') 
     
     plt.figure(2) #plotting as instructed with mass on x axis and radius on y
     #plt.subplot(3,4,i)
     plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun)
     plt.ylabel('Radius (R⊙)')
     plt.xlabel('Mass (M⊙)')
-    plt.title(f'ρ_c = {rhoc}') 
+    leg += str(rhoc)
     i += 1
 
-    print('Max Mass (M⊙)~',result.y[1][-1]*m0/m_sun)
+    print('Mass (M⊙)~',result.y[1][-1]*m0/m_sun, 'for', 'Radius (R⊙)~',result.t[-1]*r0/r_sun)
 
-plt.figure(1)
-plt.suptitle('Density vs Radius for Various Starting Densities')
-plt.tight_layout()
+# plt.figure(1)
+# plt.suptitle('Density vs Radius for Various Starting Densities')
+# plt.tight_layout()
 
 
 plt.figure(2) 
+plt.legend(leg)
 plt.suptitle('Radius vs Mass for Various Starting Densities')
 plt.tight_layout()
 plt.show()
+
+
+
+########## ANSWER/PART 2 COMMENTS #########
+
+# Using given Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙
+# As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
+# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.8%.
+
 
 
 
@@ -143,10 +154,8 @@ plt.show()
 ### PART 4 #########
 
 
-
-
 # Plotting Mass vs Radius, rho Cs chosen to fit csv 
-rho_cs = [1,3,5]
+rho_cs = [1,1.5,2,3,5]
 for rho_c in rho_cs:
     initials = [rho_c,0]
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ)
@@ -175,18 +184,8 @@ with open('wd_mass_radius.csv', 'r') as file:
 plt.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o', capsize=5, label='Data')
 
 
-plt.legend(['ρ_c = 1','ρ_c = 3','ρ_c = 5','Given Data with error bars'])
+plt.legend(['ρ_c = 1','ρ_c = 1.5','ρ_c = 2','ρ_c = 3','ρ_c = 5','Given Data with error bars'])
 plt.title('Plot for Chosen Values of ρC ')
 plt.show()
 
-
-
-
-########## ANSWER 2 COMMENTS #########
-
-# Using given Chandrasekhar limit definition, the Chandrasekhar limit is 5.836/4 * Msun =  1.459 M⊙
-# As can be seen in the (maximum) masses printed, our estimate would be about 1.433 M⊙ which is 
-# reasonably close to the Kippenhahn & Weigert citation with a percentage difference of around 1.7%.
-# Factors causing this discrepancy could be the ODE solver and the relatively dated citation and improvements
-# to parameters of astronomical objects, example: the mass of the sun used is from present day estimates.
 
