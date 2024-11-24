@@ -177,10 +177,10 @@ print()
 # Using 3 values for rho c
 rho_cs = [3,50,100]
 for rho_c in rho_cs:
-    initials = [rho_c,0]
+    initials = [rho_c,0] # using two methods
     result = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ) # Default method is RK45
     result2 = scint.solve_ivp(deriv1,(0.00000001,100),initials,t_eval =r_span,events=stop_integ,method = 'DOP853') # DOP853 should be more precise than standard RK 45
-    print('For ρ_c = ' , rho_c,':')
+    print('For ρ_c = ' , rho_c,':') # printing output 
     print('Mass   (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'| Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
     print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0/r_sun,4),'| Radius (R⊙) using DOP853: ',round(result2.t[-1]*r0/r_sun,4))
     print()
@@ -221,7 +221,7 @@ y = []
 y_err = []
 
 with open('wd_mass_radius.csv', 'r') as file:
-    lines = file.readlines()[1:]  # Ignore the first line (header)
+    lines = file.readlines()[1:]  # ignoringg the first line
     
     for line in lines: # filling lists to plot csv data
         values = line.strip().split(',')
