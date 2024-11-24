@@ -161,8 +161,9 @@ for rho_c in rho_cs:
     # plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
     # plt.xlabel('Mass (M⊙)')
     # plt.ylabel('Radius (R⊙)')
-    print('Mass (M⊙) using RK45: ',result.y[1][-1]*m0/m_sun,result2.y[1][-1]*m0/m_sun,'Mass (M⊙) using DOP853: ',result2.y[1][-1]*m0/m_sun,'\n',
-          'Radius (R⊙) using RK45: ',result.t[-1]*r0,'Radius (R⊙) using DOP853: ',result2.t[-1])
+    print('Mass (M⊙) using RK45: ',round(result.y[1][-1]*m0/m_sun,4),'Mass (M⊙) using DOP853: ',round(result2.y[1][-1]*m0/m_sun,4))
+    print('Radius (R⊙) using RK45: ',round(result.t[-1]*r0,4),'Radius (R⊙) using DOP853: ',round(result2.t[-1],4))
+    print()
 
 
 
@@ -183,7 +184,7 @@ for rho_c in rho_cs:
     plt.plot(result.y[1]*m0/m_sun,result.t*r0/r_sun,)
     plt.xlabel('Mass (M⊙)')
     plt.ylabel('Radius (R⊙)')
-    print(result.y[1][-1]*m0/m_sun)
+   
 
 # lists for csv data
 x = []
@@ -205,7 +206,7 @@ with open('wd_mass_radius.csv', 'r') as file:
 plt.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o', capsize=2, label='Data')
 
 
-plt.legend(['ρ_c = 1','ρ_c = 1.5','ρ_c = 2','ρ_c = 3','ρ_c = 5','Given Data'])
+plt.legend(['ρ_c = 1','ρ_c = 1.5','ρ_c = 2','ρ_c = 3','ρ_c = 5','Given Data'],loc = 'upper right')
 plt.title('Plot for Chosen Values of ρC ')
 plt.show()
 
